@@ -5,13 +5,13 @@
 ADD                                                             T. Pauly
 Internet-Draft                                                E. Kinnear
 Intended status: Standards Track                              Apple Inc.
-Expires: 12 February 2022                                      C.A. Wood
+Expires: 6 March 2022                                          C.A. Wood
                                                               Cloudflare
                                                               P. McManus
                                                                   Fastly
                                                                T. Jensen
                                                                Microsoft
-                                                          11 August 2021
+                                                        2 September 2021
 
 
                    Discovery of Designated Resolvers
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 12 February 2022.
+   This Internet-Draft will expire on 6 March 2022.
 
 Copyright Notice
 
@@ -78,8 +78,9 @@ Table of Contents
    2.  Terminology
    3.  DNS Service Binding Records
    4.  Discovery Using Resolver IP Addresses
-     4.1.  Authenticated Discovery
-     4.2.  Opportunistic Discovery
+     4.1.  Use of Designated Resolvers
+     4.2.  Authenticated Discovery
+     4.3.  Opportunistic Discovery
    5.  Discovery Using Resolver Names
    6.  Deployment Considerations
      6.1.  Caching Forwarders
@@ -191,7 +192,7 @@ Table of Contents
    [I-D.schwartz-svcb-dns].  However, if any protocol does not involve
    some form of certificate validation, new validation mechanisms will
    need to be defined to support validating designation as defined in
-   Section 4.1.
+   Section 4.2.
 
 4.  Discovery Using Resolver IP Addresses
 
@@ -235,11 +236,38 @@ Table of Contents
    Resolvers, it SHOULD return NODATA for queries to the "resolver.arpa"
    SUDN.
 
-4.1.  Authenticated Discovery
+4.1.  Use of Designated Resolvers
+
+   When a client discovers Designated Resolvers from an Unencrypted
+   Resolver IP address, it can choose to use these Designated Resolvers
+   either automatically, or based on some other policy, heuristic, or
+   user choice.
+
+   This document defines two preferred methods to automatically use
+   Designated Resolvers:
+
+   *  Authenticated Discovery Section 4.2, for when a TLS certificate
+      can be used to validate the resolver's identity.
+
+   *  Opportunistic Discovery Section 4.3, for when a resolver is
+      accessed using a non-public IP address.
+
+   A client MAY additionally use a discovered Designated Resolver
+   without either of these methods, based on implementation-specific
+   policy or user input.  Details of such policy are out of scope of
+   this document.  Clients SHOULD NOT automatically use a Designated
+   Resolver without some sort of validation, such as the two methods
+   defined in this document or a future mechanism.
+
+4.2.  Authenticated Discovery
+
+   Authenticated Discovery is a mechanism that allows automatic use of a
+   Designated Resolver that supports DNS encryption that performs a TLS
+   handshake.
 
    In order to be considered an authenticated Designated Resolver, the
-   TLS certificate presented by the Encrypted Resolver MUST contain both
-   the domain name (from the SVCB answer) and the IP address of the
+   TLS certificate presented by the Designated Resolver MUST contain
+   both the domain name (from the SVCB answer) and the IP address of the
    designating Unencrypted Resolver within the SubjectAlternativeName
    certificate field.  The client MUST check the SubjectAlternativeName
    field for both the Unencrypted Resolver's IP address and the
@@ -248,24 +276,24 @@ Table of Contents
    Resolver for any cases in which it would have otherwise used the
    Unencrypted Resolver.  If the Designated Resolver has a different IP
    address than the Unencrypted Resolver and the TLS certificate does
-   not cover the Unencrypted Resolver address, the client MUST NOT use
-   the discovered Encrypted Resolver.  Additionally, the client SHOULD
-   suppress any further queries for Designated Resolvers using this
-   Unencrypted Resolver for the length of time indicated by the SVCB
-   record's Time to Live (TTL).
+   not cover the Unencrypted Resolver address, the client MUST NOT
+   automatically use the discovered Designated Resolver.  Additionally,
+   the client SHOULD suppress any further queries for Designated
+   Resolvers using this Unencrypted Resolver for the length of time
+   indicated by the SVCB record's Time to Live (TTL).
 
    If the Designated Resolver and the Unencrypted Resolver share an IP
-   address, clients MAY choose to opportunistically use the Encrypted
-   Resolver even without this certificate check (Section 4.2).
+   address, clients MAY choose to opportunistically use the Designated
+   Resolver even without this certificate check (Section 4.3).
 
-   If resolving the name of an Encrypted Resolver from an SVCB record
+   If resolving the name of a Designated Resolver from an SVCB record
    yields an IP address that was not presented in the Additional Answers
    section or ipv4hint or ipv6hint fields of the original SVCB query,
    the connection made to that IP address MUST pass the same TLS
    certificate checks before being allowed to replace a previously known
-   and validated IP address for the same Encrypted Resolver name.
+   and validated IP address for the same Designated Resolver name.
 
-4.2.  Opportunistic Discovery
+4.3.  Opportunistic Discovery
 
    There are situations where authenticated discovery of encrypted DNS
    configuration over unencrypted DNS is not possible.  This includes
@@ -373,19 +401,28 @@ Table of Contents
    like RA guard [RFC6105].  An attacker might try to direct Encrypted
    DNS traffic to itself by causing the client to think that a
    discovered Designated Resolver uses a different IP address from the
-   Unencrypted Resolver.  Such an Encrypted Resolver might have a valid
+   Unencrypted Resolver.  Such a Designated Resolver might have a valid
    certificate, but be operated by an attacker that is trying to observe
    or modify user queries without the knowledge of the client or
    network.
 
-   If the IP address of a Designated Resolver differs from that of an
-   Unencrypted Resolver, clients MUST validate that the IP address of
-   the Unencrypted Resolver is covered by the SubjectAlternativeName of
-   the Encrypted Resolver's TLS certificate (Section 4.1).
+   The constraints on validation of Designated Resolvers specified here
+   apply specifically to the automatic discovery mechanisms defined in
+   this documents, which are referred to as Authenticated Discovery and
+   Opportunistic Discovery.  Clients MAY use some other mechanism to
+   validate and use Designated Resolvers discovered using the DNS SVCB
+   record.  However, use of such an alternate mechanism needs to take
+   into account the attack scenarios detailed here.
 
-   Opportunistic use of Encrypted Resolvers MUST be limited to cases
-   where the Unencrypted Resolver and Designated Resolver have the same
-   IP address (Section 4.2).
+   If the IP address of a Designated Resolver differs from that of an
+   Unencrypted Resolver, clients applying Authenicated Discovery
+   (Section 4.2) MUST validate that the IP address of the Unencrypted
+   Resolver is covered by the SubjectAlternativeName of the Designated
+   Resolver's TLS certificate.
+
+   Clients using Opportunistic Discovery (Section 4.3) MUST be limited
+   to cases where the Unencrypted Resolver and Designated Resolver have
+   the same IP address.
 
 8.  IANA Considerations
 
@@ -421,9 +458,9 @@ Table of Contents
    [I-D.ietf-tls-esni]
               Rescorla, E., Oku, K., Sullivan, N., and C. A. Wood, "TLS
               Encrypted Client Hello", Work in Progress, Internet-Draft,
-              draft-ietf-tls-esni-12, 7 July 2021,
+              draft-ietf-tls-esni-13, 12 August 2021,
               <https://datatracker.ietf.org/doc/html/draft-ietf-tls-
-              esni-12>.
+              esni-13>.
 
    [I-D.schwartz-svcb-dns]
               Schwartz, B., "Service Binding Mapping for DNS Servers",
