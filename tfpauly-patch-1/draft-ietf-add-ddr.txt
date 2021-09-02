@@ -5,13 +5,13 @@
 ADD                                                             T. Pauly
 Internet-Draft                                                E. Kinnear
 Intended status: Standards Track                              Apple Inc.
-Expires: 7 February 2022                                       C.A. Wood
+Expires: 6 March 2022                                          C.A. Wood
                                                               Cloudflare
                                                               P. McManus
                                                                   Fastly
                                                                T. Jensen
                                                                Microsoft
-                                                           6 August 2021
+                                                        2 September 2021
 
 
                    Discovery of Designated Resolvers
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 7 February 2022.
+   This Internet-Draft will expire on 6 March 2022.
 
 Copyright Notice
 
@@ -283,7 +283,7 @@ Table of Contents
    indicated by the SVCB record's Time to Live (TTL).
 
    If the Designated Resolver and the Unencrypted Resolver share an IP
-   address, clients MAY choose to opportunistically use the Encrypted
+   address, clients MAY choose to opportunistically use the Designated
    Resolver even without this certificate check (Section 4.3).
 
    If resolving the name of a Designated Resolver from an SVCB record
@@ -399,19 +399,28 @@ Table of Contents
    like RA guard [RFC6105].  An attacker might try to direct Encrypted
    DNS traffic to itself by causing the client to think that a
    discovered Designated Resolver uses a different IP address from the
-   Unencrypted Resolver.  Such an Encrypted Resolver might have a valid
+   Unencrypted Resolver.  Such a Designated Resolver might have a valid
    certificate, but be operated by an attacker that is trying to observe
    or modify user queries without the knowledge of the client or
    network.
 
-   If the IP address of a Designated Resolver differs from that of an
-   Unencrypted Resolver, clients MUST validate that the IP address of
-   the Unencrypted Resolver is covered by the SubjectAlternativeName of
-   the Encrypted Resolver's TLS certificate (Section 4.2).
+   The constraints on validation of Designated Resolvers specified here
+   apply specifically to the automatic discovery mechanisms defined in
+   this documents, which are referred to as Authenticated Discovery and
+   Opportunistic Discovery.  Clients MAY use some other mechanism to
+   validate and use Designated Resolvers discovered using the DNS SVCB
+   record.  However, use of such an alternate mechanism needs to take
+   into account the attack scenarios detailed here.
 
-   Opportunistic use of Encrypted Resolvers MUST be limited to cases
-   where the Unencrypted Resolver and Designated Resolver have the same
-   IP address (Section 4.3).
+   If the IP address of a Designated Resolver differs from that of an
+   Unencrypted Resolver, clients applying Authenicated Discovery
+   (Section 4.2) MUST validate that the IP address of the Unencrypted
+   Resolver is covered by the SubjectAlternativeName of the Designated
+   Resolver's TLS certificate.
+
+   Clients using Opportunistic Discovery (Section 4.3) MUST be limited
+   to cases where the Unencrypted Resolver and Designated Resolver have
+   the same IP address.
 
 8.  IANA Considerations
 
@@ -447,9 +456,9 @@ Table of Contents
    [I-D.ietf-tls-esni]
               Rescorla, E., Oku, K., Sullivan, N., and C. A. Wood, "TLS
               Encrypted Client Hello", Work in Progress, Internet-Draft,
-              draft-ietf-tls-esni-12, 7 July 2021,
+              draft-ietf-tls-esni-13, 12 August 2021,
               <https://datatracker.ietf.org/doc/html/draft-ietf-tls-
-              esni-12>.
+              esni-13>.
 
    [I-D.schwartz-svcb-dns]
               Schwartz, B., "Service Binding Mapping for DNS Servers",
