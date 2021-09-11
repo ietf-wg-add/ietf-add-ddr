@@ -5,13 +5,13 @@
 ADD                                                             T. Pauly
 Internet-Draft                                                E. Kinnear
 Intended status: Standards Track                              Apple Inc.
-Expires: 6 March 2022                                          C.A. Wood
+Expires: 15 March 2022                                         C.A. Wood
                                                               Cloudflare
                                                               P. McManus
                                                                   Fastly
                                                                T. Jensen
                                                                Microsoft
-                                                        2 September 2021
+                                                       11 September 2021
 
 
                    Discovery of Designated Resolvers
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 6 March 2022.
+   This Internet-Draft will expire on 15 March 2022.
 
 Copyright Notice
 
@@ -204,7 +204,7 @@ Table of Contents
 
    Because this query is for an SUDN, which no entity can claim
    ownership over, the SVCB response MUST NOT use the "." value for the
-   SvcDomainName.  Instead, the domain name used for DoT or used to
+   TargetName.  Instead, the domain name used for DoT or used to
    construct the DoH template MUST be provided.
 
    The following is an example of an SVCB record describing a DoH server
