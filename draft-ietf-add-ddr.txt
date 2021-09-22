@@ -5,13 +5,13 @@
 ADD                                                             T. Pauly
 Internet-Draft                                                E. Kinnear
 Intended status: Standards Track                              Apple Inc.
-Expires: 15 March 2022                                         C.A. Wood
+Expires: 26 March 2022                                         C.A. Wood
                                                               Cloudflare
                                                               P. McManus
                                                                   Fastly
                                                                T. Jensen
                                                                Microsoft
-                                                       11 September 2021
+                                                       22 September 2021
 
 
                    Discovery of Designated Resolvers
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 15 March 2022.
+   This Internet-Draft will expire on 26 March 2022.
 
 Copyright Notice
 
@@ -455,13 +455,6 @@ Table of Contents
               <https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-
               svcb-https-07>.
 
-   [I-D.ietf-tls-esni]
-              Rescorla, E., Oku, K., Sullivan, N., and C. A. Wood, "TLS
-              Encrypted Client Hello", Work in Progress, Internet-Draft,
-              draft-ietf-tls-esni-13, 12 August 2021,
-              <https://datatracker.ietf.org/doc/html/draft-ietf-tls-
-              esni-13>.
-
    [I-D.schwartz-svcb-dns]
               Schwartz, B., "Service Binding Mapping for DNS Servers",
               Work in Progress, Internet-Draft, draft-schwartz-svcb-dns-
@@ -484,6 +477,13 @@ Table of Contents
               <https://datatracker.ietf.org/doc/html/rfc8484>.
 
 9.2.  Informative References
+
+   [I-D.ietf-tls-esni]
+              Rescorla, E., Oku, K., Sullivan, N., and C. A. Wood, "TLS
+              Encrypted Client Hello", Work in Progress, Internet-Draft,
+              draft-ietf-tls-esni-13, 12 August 2021,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-tls-
+              esni-13>.
 
    [I-D.schinazi-httpbis-doh-preference-hints]
               Schinazi, D., Sullivan, N., and J. Kipp, "DoH Preference
